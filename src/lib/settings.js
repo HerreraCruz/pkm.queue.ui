@@ -1,3 +1,3 @@
 export default {
-    URL: "pokequeue-api.azurewebsites.net",
+    URL: "https://pokequeue-api.azurewebsites.net",
 };
