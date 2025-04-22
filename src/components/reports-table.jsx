@@ -4,10 +4,11 @@ import { useState, useEffect } from "react"
 import { Download, RefreshCw, ArrowUpDown } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function ReportsTable({ reports, loading, onRefresh, onDownload }) {
+export default function ReportsTable({ reports, loading, onRefresh, onDownload, onDelete }) {
   const [refreshing, setRefreshing] = useState(false)
   const [sortedReports, setSortedReports] = useState([])
   const [sortDirection, setSortDirection] = useState("desc") // "desc" para descendente (más reciente primero)
@@ -103,6 +104,19 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
     }
   }
 
+  // Manejar el refresco de la tabla
+  const handleDelete = async () => {
+    try {
+      setRefreshing(true)
+      await onDelete()
+      toast.success("El reporte ha sido Eliminado correctamente")
+    } catch (error) {
+      toast.error("No se pudo eliminar el reporte. Por favor, intenta de nuevo.")
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
   return (
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-2">
@@ -154,6 +168,7 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
                 <div className="flex items-center">Updated</div>
               </TableHead>
               <TableHead className="w-[80px]">Action</TableHead>
+              <TableHead className="w-[80px] text-center">Delete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -181,6 +196,33 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
                         <Download className="h-4 w-4" />
                       </Button>
                     )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {isStatusCompleted(report) && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline">Delete</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Estas Seguro de Eliminar El Registro</AlertDialogTitle>
+                            <AlertDialogDescription>
+                             Esta acción es final. Eliminará de manera permanente el registro de esta solicitud y el archivo .CSV asociado.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onDelete(getPropertyValue(report, "reportId"))}
+                              >Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                      
                   </TableCell>
                 </TableRow>
               ))

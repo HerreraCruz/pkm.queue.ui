@@ -43,3 +43,21 @@ export async function getReports() {
       throw error
     }
   }
+
+
+  export async function deleteReport(reportId) {
+    try {
+      const response = await fetch(`${settings.URL}/api/request/${reportId}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+  
+      return true; // Return success
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      throw error;
+    }
+  }

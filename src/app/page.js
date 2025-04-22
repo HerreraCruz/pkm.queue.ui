@@ -10,7 +10,7 @@ import { AlertCircle } from 'lucide-react'
 import PokemonTypeSelector from "@/components/pokemon-type-selector"
 import ReportsTable from "@/components/reports-table"
 import { getPokemonTypes } from "@/services/pokemon-service"
-import { getReports, createReport } from "@/services/report-service"
+import { getReports, createReport, deleteReport } from "@/services/report-service"
 
 export default function PokemonReportsPage() {
   const [pokemonTypes, setPokemonTypes] = useState([])
@@ -104,6 +104,24 @@ export default function PokemonReportsPage() {
     window.open(url, "_blank")
   }
 
+  const handleDeleteCSV = async (reportId) => {
+    try {
+      // llama a la función de eliminar reporte
+      await deleteReport(reportId);
+  
+      // Muestra el mensaje de éxito
+      toast.success("El reporte ha sido eliminado correctamente.");
+  
+      // refresca la tabla para mostrar los reportes actualizados
+      await loadReports();
+    } catch (error) {
+      console.error("Error deleting report:", error);
+  
+      // Monstrar notificación de error
+      toast.error("No se pudo eliminar el reporte. Por favor, intenta de nuevo.");
+    }
+  };
+
   const isLoading = loadingTypes || loadingReports
 
   return (
@@ -146,6 +164,7 @@ export default function PokemonReportsPage() {
             loading={loadingReports}
             onRefresh={handleRefreshTable}
             onDownload={handleDownloadCSV}
+            onDelete={handleDeleteCSV}
           />
         </CardContent>
       </Card>
