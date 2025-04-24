@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from 'lucide-react'
-
 import PokemonTypeSelector from "@/components/pokemon-type-selector"
 import ReportsTable from "@/components/reports-table"
 import { getPokemonTypes } from "@/services/pokemon-service"
@@ -78,9 +77,19 @@ export default function PokemonReportsPage() {
 
     try {
       setCreatingReport(true)
-
-      // Crear un nuevo reporte usando la API
-      await createReport(selectedType)
+      let sampleSize = document.getElementById("sampleSizeInput").value;
+      if (sampleSize === "") {sampleSize = null}
+      // Verificar el tamaño de muestra
+      const parsedSampleSize = Number(sampleSize) // Asegúrate de que sampleSize sea un número entero
+      console.log("sample size", sampleSize)
+      //Crear un nuevo reporte usando la API utilizando el tamaño de muestra
+      if ( ( parsedSampleSize <= 0 || !Number.isInteger(parsedSampleSize)) && sampleSize !== null) {
+        toast.error("Por favor, introduce un tamaño de muestra válido.")
+        setCreatingReport(false)
+        return
+      }
+      console.log("sample size 1", sampleSize)
+      await createReport(selectedType, sampleSize)
 
       // Mostrar notificación de éxito
       toast.success(`Se ha generado un nuevo reporte para el tipo ${selectedType}.`)
@@ -146,6 +155,16 @@ export default function PokemonReportsPage() {
                 selectedType={selectedType}
                 onTypeChange={setSelectedType}
                 loading={loadingTypes}
+              />
+            </div>
+            <div className="w-full md:w-1/3">
+              <input 
+                className="text-center border-4 rounded-md" 
+                type="number"
+                id="sampleSizeInput" 
+                step="1" 
+                min="1"
+                placeholder="# Máximo de Registros"
               />
             </div>
             <div className="w-full md:w-1/3">

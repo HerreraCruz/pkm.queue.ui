@@ -168,7 +168,7 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload, 
                 <div className="flex items-center">Updated</div>
               </TableHead>
               <TableHead className="w-[80px]">Action</TableHead>
-              <TableHead className="w-[80px] text-center">Delete</TableHead>
+              <TableHead className="w-[80px] text-center">DeleteReport</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

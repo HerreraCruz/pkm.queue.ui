@@ -18,7 +18,7 @@ export async function getReports() {
     }
   }
 
-  export async function createReport(pokemonType) {
+  export async function createReport(pokemonType, sampleSize) {
     try {
       const response = await fetch(`${settings.URL}/api/request`, {
         method: "POST",
@@ -27,9 +27,10 @@ export async function getReports() {
         },
         body: JSON.stringify({
           pokemon_type: pokemonType,
+          sample_size: sampleSize, // envía el tamaño de la muestra para generar el reporte .csv
         }),
       })
-
+      console.log("valor jodido:", sampleSize)
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`)
       }
